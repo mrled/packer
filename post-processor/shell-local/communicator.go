@@ -17,6 +17,7 @@ func (c *Communicator) Start(cmd *packer.RemoteCmd) error {
 	localCmd.Stdin = cmd.Stdin
 	localCmd.Stdout = cmd.Stdout
 	localCmd.Stderr = cmd.Stderr
+	localCmd.Env = cmd.Env
 
 	// Start it. If it doesn't work, then error right away.
 	if err := localCmd.Start(); err != nil {

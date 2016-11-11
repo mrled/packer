@@ -39,6 +39,13 @@ type RemoteCmd struct {
 	// Once Exited is true, this will contain the exit code of the process.
 	ExitStatus int
 
+	// Env specifies the environment the command will run with.
+	// If this is empty, inherit the environment from the parent process.
+	// TODO: use this everywhere
+	// TODO: make sure it works properly remotely
+	//       (so like, not inheriting the host's environment, but the guest's)
+	Env []string
+
 	// Internal fields
 	exitCh chan struct{}
 

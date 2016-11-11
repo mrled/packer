@@ -47,7 +47,6 @@ type PostProcessor struct {
 }
 
 type ExecuteCommandTemplate struct {
-	Vars     string
 	Script   string
 	Artifact string
 }
@@ -67,7 +66,7 @@ func (p *PostProcessor) Configure(raws ...interface{}) error {
 	}
 
 	if p.config.ExecuteCommand == "" {
-		p.config.ExecuteCommand = "chmod +x {{.Script}}; {{.Vars}} {{.Script}} {{.Artifact}}"
+		p.config.ExecuteCommand = "chmod +x {{.Script}}; {{.Script}} {{.Artifact}}"
 	}
 
 	if p.config.Inline != nil && len(p.config.Inline) == 0 {
@@ -174,11 +173,7 @@ func (p *PostProcessor) PostProcess(ui packer.Ui, artifact packer.Artifact) (pac
 
 	for _, file := range artifact.Files() {
 		for _, script := range scripts {
-			// Flatten the environment variables
-			flattendVars := strings.Join(envVars, " ")
-
 			p.config.ctx.Data = &ExecuteCommandTemplate{
-				Vars:     flattendVars,
 				Script:   script,
 				Artifact: file,
 			}
@@ -192,7 +187,7 @@ func (p *PostProcessor) PostProcess(ui packer.Ui, artifact packer.Artifact) (pac
 
 			comm := &Communicator{}
 
-			cmd := &packer.RemoteCmd{Command: command}
+			cmd := &packer.RemoteCmd{Command: command, Env: envVars}
 
 			ui.Say(fmt.Sprintf(
 				"Executing local script: %s",
